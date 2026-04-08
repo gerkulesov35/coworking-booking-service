@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+
+# Django
+db.sqlite3
+*.log
+media/
+
+# Environment variables
+.env
+
+# Docker
+docker-compose.override.yml
+
+# IDE
+.vscode/
+.idea/
+
+# MacOS
+.DS_Store
+
+# Python tools cache
+.mypy_cache/
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Temporary files
+*.tmp
+*.swp
