@@ -1,16 +1,95 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Профиль</title>
-</head>
-<body>
-    <nav>
-        <a href="/">Переговорные</a> |
-        <a href="/profile/">Профиль</a>
-    </nav>
+{% extends 'base.html' %}
 
-    <h1>Профиль пользователя</h1>
-    <p>Это тестовая страница профиля.</p>
-</body>
-</html>
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Профиль</h1>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 mb-3">Данные пользователя</h2>
+                <dl class="row mb-0 small">
+                    <dt class="col-sm-5">Имя пользователя:</dt>
+                    <dd class="col-sm-7">{{ user.username }}</dd>
+
+                    <dt class="col-sm-5">Email:</dt>
+                    <dd class="col-sm-7">{{ user.email|default:'-' }}</dd>
+
+                    <dt class="col-sm-5">Полное имя:</dt>
+                    <dd class="col-sm-7">{{ user.get_full_name|default:'-' }}</dd>
+
+                    <dt class="col-sm-5">Роль:</dt>
+                    <dd class="col-sm-7">
+                        {% if user.profile.role == 'admin' %}
+                            <span class="badge bg-danger">{{ user.profile.get_role_display }}</span>
+                        {% elif user.profile.role == 'manager' %}
+                            <span class="badge bg-warning text-dark">{{ user.profile.get_role_display }}</span>
+                        {% else %}
+                            <span class="badge bg-info text-dark">{{ user.profile.get_role_display }}</span>
+                        {% endif %}
+                    </dd>
+
+                    <dt class="col-sm-5">Телефон:</dt>
+                    <dd class="col-sm-7">{{ user.profile.phone|default:'-' }}</dd>
+
+                    <dt class="col-sm-5">Дата регистрации:</dt>
+                    <dd class="col-sm-7">{{ user.date_joined|date:'d.m.Y' }}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-3">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Статистика бронирований</h2>
+                <div class="row text-center">
+                    <div class="col">
+                        <div class="display-6 text-primary">{{ bookings_total }}</div>
+                        <div class="text-muted small">всего</div>
+                    </div>
+                    <div class="col">
+                        <div class="display-6 text-success">{{ bookings_active }}</div>
+                        <div class="text-muted small">активных</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Последние бронирования</h2>
+                {% if recent_bookings %}
+                    <ul class="list-group list-group-flush">
+                        {% for booking in recent_bookings %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="{% url 'room_detail' booking.room.pk %}">{{ booking.room.title }}</a>
+                                    <div class="small text-muted">
+                                        {{ booking.start_time|date:'d.m.Y H:i' }} - {{ booking.end_time|date:'H:i' }}
+                                    </div>
+                                </div>
+                                {% if booking.status == 'confirmed' %}
+                                    <span class="badge bg-success">{{ booking.get_status_display }}</span>
+                                {% elif booking.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark">{{ booking.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ booking.get_status_display }}</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{% url 'my_bookings' %}" class="btn btn-link mt-2 ps-0">Все бронирования →</a>
+                {% else %}
+                    <p class="text-muted mb-0">У вас пока нет бронирований.</p>
+                    <a href="{% url 'room_list' %}" class="btn btn-primary mt-3">
+                        <i class="bi bi-search"></i> Выбрать переговорную
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

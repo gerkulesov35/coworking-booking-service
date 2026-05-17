@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<section class="bg-white rounded-3 shadow-sm p-5 mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h1 class="display-5 fw-bold mb-3">Сервис бронирования переговорных</h1>
+            <p class="lead text-muted mb-4">
+                Удобно ищите переговорные коворкингов и бронируйте их по часам.
+                Без звонков и переписок: выбрали комнату, указали время, получили подтверждение.
+            </p>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{% url 'room_list' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-building"></i> Выбрать переговорную
+                </a>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="btn btn-outline-secondary btn-lg">
+                        Зарегистрироваться
+                    </a>
+                {% else %}
+                    <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary btn-lg">
+                        Мои бронирования
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-5 text-center d-none d-lg-block">
+            <i class="bi bi-building-check text-primary" style="font-size:10rem"></i>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h2 class="h3 mb-4 text-center">Почему это удобно</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center p-3">
+                <div class="text-primary mb-2"><i class="bi bi-lightning-charge-fill" style="font-size:2.5rem"></i></div>
+                <h3 class="h5">Быстрое бронирование</h3>
+                <p class="text-muted small mb-0">
+                    Создание брони занимает несколько секунд: выбрали комнату, указали время и подтвердили.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center p-3">
+                <div class="text-primary mb-2"><i class="bi bi-list-check" style="font-size:2.5rem"></i></div>
+                <h3 class="h5">Удобный список комнат</h3>
+                <p class="text-muted small mb-0">
+                    Все переговорные с описанием, вместимостью, ценой и расположением на одной странице.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm text-center p-3">
+                <div class="text-primary mb-2"><i class="bi bi-calendar2-check" style="font-size:2.5rem"></i></div>
+                <h3 class="h5">Свои бронирования</h3>
+                <p class="text-muted small mb-0">
+                    История бронирований всегда под рукой, в любой момент можно отменить ненужное.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if featured_rooms %}
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h3 mb-0">Свежие переговорные</h2>
+        <a href="{% url 'room_list' %}" class="btn btn-link">Все переговорные →</a>
+    </div>
+    <div class="row g-4">
+        {% for room in featured_rooms %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm">
+                    {% if room.image %}
+                        <img src="{{ room.image.url }}" class="card-img-top" alt="{{ room.title }}" style="height:160px;object-fit:cover">
+                    {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:160px">
+                            <i class="bi bi-building" style="font-size:3rem"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="h6">{{ room.title }}</h3>
+                        <p class="small text-muted mb-2">
+                            <i class="bi bi-people"></i> до {{ room.capacity }}
+                            &middot; {{ room.price_per_hour }} ₽/час
+                        </p>
+                        <a href="{% url 'room_detail' room.pk %}" class="btn btn-outline-primary btn-sm mt-auto">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endblock %}

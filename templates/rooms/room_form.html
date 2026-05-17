@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if room %}Редактирование переговорной{% else %}Новая переговорная{% endif %}{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">{% if room %}Редактирование «{{ room.title }}»{% else %}Новая переговорная{% endif %}</h1>
+
+<form method="post" enctype="multipart/form-data" class="card shadow-sm p-4 bg-white" style="max-width:640px">
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    {% for field in form %}
+        <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+        </div>
+    {% endfor %}
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'manage_rooms' %}" class="btn btn-outline-secondary">Отмена</a>
+    </div>
+</form>
+
+{% block extra_scripts %}
+<script>
+    document.querySelectorAll('form input, form textarea, form select').forEach(el => {
+        if (el.type === 'checkbox') el.classList.add('form-check-input');
+        else if (el.type === 'file') el.classList.add('form-control');
+        else el.classList.add('form-control');
+    });
+</script>
+{% endblock %}
+{% endblock %}

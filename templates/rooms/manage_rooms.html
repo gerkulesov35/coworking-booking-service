@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Управление переговорными{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2 mb-0">Управление переговорными</h1>
+    <a href="{% url 'room_create' %}" class="btn btn-success">
+        <i class="bi bi-plus-lg"></i> Новая
+    </a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover bg-white shadow-sm align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Название</th>
+                <th>Локация</th>
+                <th>Вместимость</th>
+                <th>Цена/час</th>
+                <th>Активна</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+                <tr>
+                    <td>{{ room.id }}</td>
+                    <td>{{ room.title }}</td>
+                    <td>{{ room.location|default:'-' }}</td>
+                    <td>{{ room.capacity }}</td>
+                    <td>{{ room.price_per_hour }} ₽</td>
+                    <td>
+                        {% if room.is_active %}<span class="badge bg-success">да</span>
+                        {% else %}<span class="badge bg-secondary">нет</span>{% endif %}
+                    </td>
+                    <td class="text-end">
+                        <a href="{% url 'room_update' room.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a href="{% url 'room_delete' room.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">Переговорных пока нет.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,29 +1,66 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Сервис бронирования переговорных коворкингов</title>
-</head>
-<body>
-    <nav>
-        <a href="/">Переговорные</a> |
-        <a href="/profile/">Профиль</a>
-    </nav>
+{% extends 'base.html' %}
 
-    <h1>Список переговорных</h1>
+{% block title %}Переговорные{% endblock %}
 
-    {% if rooms %}
-        <ul>
-            {% for room in rooms %}
-                <li>
-                    <strong>{{ room.name }}</strong> —
-                    вместимость: {{ room.capacity }}<br>
-                    {{ room.description }}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Пока переговорных нет.</p>
+{% block extra_head %}
+<style>
+    .room-image { height: 200px; object-fit: cover; }
+    .room-placeholder { height: 200px; }
+    .room-description { min-height: 4.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="h2 mb-1">Переговорные</h1>
+        <p class="text-muted mb-0 small">Найдите подходящую комнату и забронируйте её по часам.</p>
+    </div>
+    {% if user.is_authenticated and user.profile.is_manager %}
+        <a href="{% url 'room_create' %}" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Добавить переговорную
+        </a>
     {% endif %}
-</body>
-</html>
+</div>
+
+{% if rooms %}
+    <div class="row g-4">
+        {% for room in rooms %}
+            <div class="col-md-6 col-lg-4 d-flex">
+                <div class="card shadow-sm w-100">
+                    {% if room.image %}
+                        <img src="{{ room.image.url }}" class="card-img-top room-image" alt="{{ room.title }}">
+                    {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center room-placeholder">
+                            <i class="bi bi-building" style="font-size:3rem"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h2 class="h5 mb-0">{{ room.title }}</h2>
+                            {% if room.is_active %}
+                                <span class="badge bg-success">активна</span>
+                            {% else %}
+                                <span class="badge bg-secondary">не активна</span>
+                            {% endif %}
+                        </div>
+                        <ul class="list-unstyled text-muted small mb-2">
+                            <li><i class="bi bi-geo-alt"></i> {{ room.location|default:'-' }}</li>
+                            <li><i class="bi bi-people"></i> Вместимость: до {{ room.capacity }} чел.</li>
+                            <li><i class="bi bi-cash-coin"></i> {{ room.price_per_hour }} ₽ / час</li>
+                        </ul>
+                        <p class="card-text small text-muted room-description">{{ room.description|truncatewords:18 }}</p>
+                        <div class="mt-auto">
+                            <a href="{% url 'room_detail' room.pk %}" class="btn btn-primary w-100">
+                                Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">Пока переговорных нет.</div>
+{% endif %}
+{% endblock %}

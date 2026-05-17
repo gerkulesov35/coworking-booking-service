@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ room.title }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'room_list' %}">Переговорные</a></li>
+        <li class="breadcrumb-item active">{{ room.title }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            {% if room.image %}
+                <img src="{{ room.image.url }}" class="card-img-top" alt="{{ room.title }}" style="max-height:360px;object-fit:cover">
+            {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height:280px">
+                    <i class="bi bi-building" style="font-size:5rem"></i>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h1 class="h3">
+                    {{ room.title }}
+                    {% if room.is_active %}
+                        <span class="badge bg-success align-middle">активна</span>
+                    {% else %}
+                        <span class="badge bg-secondary align-middle">не активна</span>
+                    {% endif %}
+                </h1>
+                <ul class="list-unstyled text-muted">
+                    <li><i class="bi bi-geo-alt"></i> Локация: {{ room.location|default:'не указана' }}</li>
+                    <li><i class="bi bi-people"></i> Вместимость: до {{ room.capacity }} чел.</li>
+                    <li><i class="bi bi-cash-coin"></i> Цена: {{ room.price_per_hour }} ₽ / час</li>
+                </ul>
+                <hr>
+                <h2 class="h6 text-muted">Описание</h2>
+                <p class="mb-0">{{ room.description|linebreaksbr|default:'Описание пока не добавлено.' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5 mb-3"><i class="bi bi-calendar-plus"></i> Забронировать</h2>
+
+                {% if not user.is_authenticated %}
+                    <div class="alert alert-warning small mb-3">
+                        Для бронирования необходимо
+                        <a href="{% url 'login' %}?next={{ request.path }}">войти</a>
+                        или
+                        <a href="{% url 'register' %}">зарегистрироваться</a>.
+                    </div>
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary w-100">Войти</a>
+                {% elif not room.is_active %}
+                    <div class="alert alert-secondary small mb-0">
+                        Эта переговорная сейчас не доступна для бронирования.
+                    </div>
+                {% else %}
+                    <form method="post" action="{% url 'booking_create' room.pk %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Начало</label>
+                            <input type="datetime-local" name="start_time" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Окончание</label>
+                            <input type="datetime-local" name="end_time" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-check2-circle"></i> Забронировать
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if user.is_authenticated and user.profile.is_manager %}
+            <div class="card shadow-sm mt-3">
+                <div class="card-body">
+                    <h2 class="h6"><i class="bi bi-shield-lock"></i> Управление</h2>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'room_update' room.pk %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pencil"></i> Редактировать
+                        </a>
+                        <a href="{% url 'room_delete' room.pk %}" class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

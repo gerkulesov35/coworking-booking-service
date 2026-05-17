@@ -3,3 +3,9 @@ Django==6.0.3
 psycopg2-binary==2.9.11
 redis==7.4.0
 sqlparse==0.5.5
+djangorestframework==3.15.2
+drf-spectacular==0.27.2
+Pillow==10.4.0
+gunicorn==23.0.0
+whitenoise==6.7.0
+dj-database-url==2.2.0
