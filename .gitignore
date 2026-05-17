@@ -23,6 +23,9 @@ docker-compose.override.yml
 .vscode/
 .idea/
 
+# Claude Code workspace
+.claude/
+
 # MacOS
 .DS_Store
 
