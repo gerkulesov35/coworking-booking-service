@@ -97,19 +97,27 @@ class Command(BaseCommand):
         return users
 
     def _seed_bookings(self, users, rooms):
-        now = timezone.now().replace(minute=0, second=0, microsecond=0)
         user1 = users['user1']
         manager1 = users['manager1']
+
+        # Демо-брони хранятся «на завтра/послезавтра» относительно текущего дня —
+        # чтобы данные оставались актуальными при повторных запусках. Чтобы
+        # время не плавало по часам внутри одного дня, сначала удаляем старые
+        # тестовые брони этих пользователей и создаём свежие.
+        Booking.objects.filter(user__in=[user1, manager1]).delete()
+
+        today = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
         scenarios = [
-            (user1, rooms['Tokyo'], now + timedelta(days=1, hours=10), now + timedelta(days=1, hours=11), Booking.STATUS_CONFIRMED),
-            (user1, rooms['Berlin'], now + timedelta(days=2, hours=14), now + timedelta(days=2, hours=16), Booking.STATUS_CONFIRMED),
-            (manager1, rooms['New York'], now + timedelta(days=3, hours=9), now + timedelta(days=3, hours=11), Booking.STATUS_PENDING),
+            (user1,    rooms['Tokyo'],    today + timedelta(days=1, hours=10), today + timedelta(days=1, hours=11), Booking.STATUS_CONFIRMED),
+            (user1,    rooms['Berlin'],   today + timedelta(days=2, hours=14), today + timedelta(days=2, hours=16), Booking.STATUS_CONFIRMED),
+            (manager1, rooms['New York'], today + timedelta(days=3, hours=9),  today + timedelta(days=3, hours=11), Booking.STATUS_PENDING),
         ]
         for owner, room, start, end, status in scenarios:
-            obj, created = Booking.objects.get_or_create(
+            Booking.objects.create(
                 user=owner,
                 room=room,
                 start_time=start,
-                defaults={'end_time': end, 'status': status},
+                end_time=end,
+                status=status,
             )
-            self.stdout.write(f'  booking {"+" if created else "="} {owner.username} {room.title} {start:%Y-%m-%d %H:%M}')
+            self.stdout.write(f'  booking = {owner.username} {room.title} {start:%Y-%m-%d %H:%M}')
