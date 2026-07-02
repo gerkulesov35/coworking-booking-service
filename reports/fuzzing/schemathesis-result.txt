@@ -2,156 +2,27 @@ Schemathesis v4.21.10
 ━━━━━━━━━━━━━━━━━━━━━
 
 
- ✅  Loaded specification from http://localhost:8000/api/schema/ (in 0.21s)                                               
+ ✅  Loaded specification from http://localhost:8000/api/schema/ (in 0.19s)                                        
 
-     Base URL:         http://localhost:8000/                                                                             
-     Specification:    Open API 3.0.3                                                                                     
-     Operations:       8 selected / 8 total                                                                               
+     Base URL:         http://localhost:8000/                                                                      
+     Specification:    Open API 3.0.3                                                                              
+     Operations:       8 selected / 8 total                                                                        
 
 
- ✅  API capabilities:                                                                                                    
+ ✅  API capabilities:                                                                                             
 
-     Supports NULL byte in headers:                            ✓                                                          
-     Accepts backslash and control characters in URL paths:    ✓                                                          
+     Supports NULL byte in headers:                            ✓                                                   
+     Accepts backslash and control characters in URL paths:    ✓                                                   
 
- ❌  Fuzzing (in 2.31s)                                                                                                   
-                                                                                                                          
-     ❌ 8 failed                                                                                                          
-
-=================================== FAILURES ===================================
-___________________________ DELETE /api/rooms/{id}/ ____________________________
-1. Test Case ID: ZDNIRs
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 204
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X DELETE -H 'Authorization: [Filtered]' -H 'Cookie: [Filtered]' http://localhost:8000/api/rooms/1/
-
-______________________________ GET /api/bookings/ ______________________________
-1. Test Case ID: vSuf8J
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 200
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X GET -H 'Authorization: [Filtered]' -H 'Cookie: [Filtered]' http://localhost:8000/api/bookings/
-
-_______________________________ GET /api/rooms/ ________________________________
-1. Test Case ID: usJxif
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 200
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X GET -H 'Authorization: [Filtered]' -H 'Cookie: [Filtered]' http://localhost:8000/api/rooms/
-
-_____________________________ GET /api/rooms/{id}/ _____________________________
-1. Test Case ID: c2Dhs2
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 200
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X GET -H 'Authorization: [Filtered]' -H 'Cookie: [Filtered]' http://localhost:8000/api/rooms/1/
-
-____________________________ PATCH /api/rooms/{id}/ ____________________________
-1. Test Case ID: uHyY5q
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 200
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X PATCH -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -H 'Cookie: [Filtered]' -d '{}' http://localhost:8000/api/rooms/1/
-
-_____________________________ POST /api/bookings/ ______________________________
-1. Test Case ID: HgZYKk
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 201
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -H 'Cookie: [Filtered]' -d '{"end_time": "2000-01-01T00:00:00Z", "room": 0, "start_time": "2000-01-01T00:00:00Z"}' http://localhost:8000/api/bookings/
-
-_______________________________ POST /api/rooms/ _______________________________
-1. Test Case ID: 7HX2zx
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 201
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X POST -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -H 'Cookie: [Filtered]' -d '{"capacity": 0, "title": ""}' http://localhost:8000/api/rooms/
-
-_____________________________ PUT /api/rooms/{id}/ _____________________________
-1. Test Case ID: KJMo28
-
-- Undocumented HTTP status code
-
-    Received: 403
-    Documented: 200
-
-[403] Forbidden:
-
-    `{"detail":"Invalid username/password."}`
-
-Reproduce with:
-
-    curl -X PUT -H 'Authorization: [Filtered]' -H 'Content-Type: application/json' -H 'Cookie: [Filtered]' -d '{"capacity": 0, "title": ""}' http://localhost:8000/api/rooms/1/
+ ✅  Fuzzing (in 4.88s)                                                                                            
+                                                                                                                   
+     ✅ 8 passed                                                                                                   
 
 =================================== WARNINGS ===================================
 
-Authentication failed: 8 operations returned authentication errors
+Authentication failed: 7 operations returned authentication errors
 
-403 Forbidden (8 operations):
+403 Forbidden (7 operations):
   - DELETE /api/rooms/{id}/
   - GET /api/bookings/
   - GET /api/rooms/
@@ -159,9 +30,14 @@ Authentication failed: 8 operations returned authentication errors
   - PATCH /api/rooms/{id}/
   - POST /api/bookings/
   - POST /api/rooms/
-  - PUT /api/rooms/{id}/
 
 💡 Ensure valid authentication credentials are set via --auth or -H
+
+Missing test data: 1 operation repeatedly returned 404 Not Found, preventing tests from reaching your API's core logic
+
+  - PUT /api/rooms/{id}/
+
+💡 Provide realistic parameter values in your config file so tests can access existing resources
 
 =================================== SUMMARY ====================================
 
@@ -172,18 +48,16 @@ API Operations:
 Test Phases:
   ⏭  Examples (disabled)
   ⏭  Coverage (disabled)
-  ❌ Fuzzing
+  ✅ Fuzzing
   ⏭  Stateful (disabled)
 
-Failures:
-  ❌ Undocumented HTTP status code: 8
-
 Warnings:
-  ⚠️ Missing authentication: 8 operations returned only 401/403 responses
+  ⚠️ Missing authentication: 7 operations returned only 401/403 responses
+  ⚠️ Missing valid test data: 1 operation repeatedly returned 404 responses
 
 Test cases:
-  8 generated, 8 found 8 unique failures
+  24 generated, 24 passed
 
-Seed: 180932418643772749376481586397928966187
+Seed: 231526431095100375900127184103926419053
 
-======================== 8 failures, 1 warning in 2.38s ========================
+============================= 2 warnings in 4.94s ==============================
